@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+    <h4>Clasificacion equipos {{ liga }}</h4>
+    <div id="container" style="width:100%; height:400px;"></div>
+    <script>
+    $(function () { 
+      var myChart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Fruit Consumption'
+        },
+        xAxis: {
+            categories: ['Apples', 'Bananas', 'Oranges']
+        },
+        yAxis: {
+            title: {
+                text: 'Fruit eaten'
+            }
+        },
+        series: [{
+            name: 'Jane',
+            data: [1, 0, 4]
+        }, {
+            name: 'John',
+            data: [5, 7, 3]
+        }]
+        });
+      }); 
+    </script>
+    
+    <table>
+        <thead>
+          <tr>
+            <th>local</th>
+            <th>goles</th>
+            <th>visitante</th>
+            <th>goles</th>
+            <th>editar</th>
+          </tr>
+        </thead>
+        <tbody>
+         {% macro jornada (a) %}
+            {% if a == 1 %}
+               <td><strong>Jornada liga Nro {{ a }}</strong></td>
+            {% elif a < 380  %}
+               <td><strong>Jornada liga Nro {{ a/10 + 1 }}</strong></td>
+            {% else %}
+               <td><strong>Jornada liga Nro {{ a/10-37}}</strong></td>
+            {% endif %}
+         {% endmacro %}
+         {% for liga in result %}
+          <tr>
+            {% if result[liga][6] == 'true' %}
+                {{ jornada(liga)}}
+            {% endif %}
+            <td>{{ result[liga][5] }}</td>
+            <td>{{ result[liga][0] }}</td>
+            <td>{{ result[liga][1] }}</td>
+            <td>{{ result[liga][2] }}</td>
+            <td>{{ result[liga][3] }}</td>
+            <td><a href="{{ result[liga][4] }}" class='btn btn-success' >Editar</a></td>
+          </tr>
+
+         {% endfor %}
+        </tbody>
+    </table> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>
