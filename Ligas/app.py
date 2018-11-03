@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json, redirect, url_for
+from flask import Flask, render_template, request, json, redirect, url_for, jsonify
 import pymysql.cursors
 
 # Connect to the database
@@ -11,14 +11,18 @@ connection = pymysql.connect(host='localhost',
 app = Flask(__name__)
 
 
-@app.route("/")
-def login():
+@app.route('/clasificacion/<id>/', methods=['POST', 'GET'])
+def liga(id):
     cursor=connection.cursor()
     # Read a single record
-    sql = "SELECT * FROM calendario "
-    cursor.execute(sql)
+    if id != '7':
+        cursor.execute("SELECT * FROM calendario WHERE id_liga=%s and estado='PENDIENTE'", str(id))
+    else:
+        cursor.execute("SELECT * FROM calendario WHERE id_liga=%s and estado='PENDIENTE'", str(id))
+
     result = cursor.fetchall()
     #resultado= []
+    print(result)
     resultado = {}
     cont = 0
     Jornada = 1
@@ -46,45 +50,254 @@ def login():
             registro['gol_eq2'] = gol_eq2"""
         if Jornada != nrofecha:
            Jornada = nrofecha
+           cambio = 'true'
            idj = "J" + str(Jornada) + "-P" + str(idp)
-           resultado[cont] = (equipo_1, gol_eq1, equipo_2, gol_eq2, url, idj)
+           resultado[cont] = (equipo_1, gol_eq1, equipo_2, gol_eq2, url, idj, cambio)
         else:
            idj = "J" + str(Jornada) + "-P" + str(idp)
-           resultado[cont] = (equipo_1, gol_eq1, equipo_2, gol_eq2, url, idj)
+           cambio = 'false'
+           resultado[cont] = (equipo_1, gol_eq1, equipo_2, gol_eq2, url, idj, cambio)
 
 
         cont = cont + 1
 
-    return render_template('index.html', result=resultado, nombre=ps)
+    return render_template('clasificacion.html', result=resultado, nombre=id, liga = 'española')
+
+@app.route("/")
+def home():
+    cursor=connection.cursor()
+    # Read a single record
+    sql = "SELECT * FROM liga " #
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    resultado = {}
+    cont = 0
+    for rows in result:
+        idlig = rows["id"]
+        nombre = rows["nombre"]
+        pais = rows["pais"]
+        continente = rows["continente"]
+        url = "http://localhost:8000/clasificacion/" + str(idlig) + "/"
+        resultado[cont] = (idlig,  nombre, pais, continente, url)
+        cont = cont + 1
+
+    return render_template('home.html', result=resultado)
 
 
 @app.route('/resultado/<id>/<liga>/', methods=['POST', 'GET'])
 def form_resultados(id, liga):
+    resultado = {}
     cursor = connection.cursor()
     # Read a single record
-    url = "http://localhost:8000/actualizar/"
-    cursor.execute("SELECT id, nombre FROM equipos WHERE id_liga = %s", liga)
+    url = "http://localhost:8000/actualizar/"+ str(id) + "/" + str(liga) + "/"
+    sql="SELECT * FROM calendario WHERE id_liga = %s and id= %s "
+    cursor.execute(sql, (liga, id))
     equipos_liga = cursor.fetchall()
+    for rows in equipos_liga:
+        id_e1 = rows["equipo_1"]
+        gol_eq1 = rows["gol_eq1"]
+        id_e2 = rows["equipo_2"]
+        gol_eq2 = rows["gol_eq2"]
 
-    return render_template('form_partido.html', equipos = equipos_liga, idp = id, url = url)
+    sql1 = "SELECT nombre FROM equipos WHERE id= %s "
+    cursor.execute(sql1, (id_e1))
+    nom_eq1 = cursor.fetchall()
+
+    sql2 = "SELECT nombre FROM equipos WHERE id= %s "
+    cursor.execute(sql2, (id_e2))
+    nom_eq2 = cursor.fetchall()
+
+    sql3 = "select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga= %s and estado='JUGADO';"
+    cursor.execute(sql3, (liga))
+    goles_liga = cursor.fetchall()
+    derrota = []
+    empate = []
+    victoria = []
+    empate_eq1 = 0
+    victoria_eq1 = 0
+    derrota_eq1 = 0
+    empate_eq1_local = 0
+    victoria_eq1_local = 0
+    derrota_eq1_local = 0
+    empate_eq1_visitante = 0
+    victoria_eq1_visitante = 0
+    derrota_eq1_visitante = 0
+    empate_eq2 = 0
+    victoria_eq2 = 0
+    derrota_eq2 = 0
+    empate_eq2_local = 0
+    victoria_eq2_local = 0
+    derrota_eq2_local = 0
+    empate_eq2_visitante = 0
+    victoria_eq2_visitante = 0
+    derrota_eq2_visitante = 0
+
+    for rows in goles_liga:
+        gol_eq1 = rows["gol_eq1"]
+        gol_eq2 = rows["gol_eq2"]
+        nro_fecha = rows["nro_fecha"]
+        equipo_1 = rows["equipo_1"]
+        equipo_2 = rows["equipo_2"]
+
+        if equipo_1 == str(id_e1):
+            if gol_eq1 == gol_eq2:
+                empate_eq1 += 1
+                empate_eq1_local += 1
+
+            if gol_eq2 < gol_eq1:
+                victoria_eq1 += 1
+                victoria_eq1_local += 1
+
+            if gol_eq1 < gol_eq2:
+                derrota_eq1 -= 1
+                derrota_eq1_local += 1
+
+        if equipo_2 == str(id_e1):
+            if gol_eq1 == gol_eq2:
+                empate_eq1 += 1
+                empate_eq1_visitante += 1
+
+            if gol_eq1 < gol_eq2:
+                victoria_eq1 += 1
+                victoria_eq1_visitante += 1
+
+            if gol_eq2 < gol_eq1:
+                derrota_eq1 -= 1
+                derrota_eq1_visitante += 1
+
+        if equipo_1 == str(id_e2):
+            if gol_eq1 == gol_eq2:
+                empate_eq2 += 1
+                empate_eq2_local += 1
 
 
-@app.route('/actualizar/', methods=['POST', 'GET'])
-def actualizar():
+            if gol_eq2 < gol_eq1:
+                victoria_eq2 += 1
+                victoria_eq2_local += 1
+
+            if gol_eq1 < gol_eq2:
+                derrota_eq2 -= 1
+                derrota_eq2_local += 1
+
+        if equipo_2 ==  str(id_e2):
+            if gol_eq1 == gol_eq2:
+                empate_eq2 += 1
+                empate_eq2_visitante += 1
+
+            if gol_eq1 < gol_eq2:
+                victoria_eq2 += 1
+                victoria_eq2_visitante += 1
+
+            if gol_eq2 < gol_eq1:
+                derrota_eq2 -= 1
+                derrota_eq2_visitante += 1
+
+    derrota.append(derrota_eq1)
+    derrota.append(derrota_eq2)
+    empate.append(empate_eq1)
+    empate.append(empate_eq2)
+    victoria.append(victoria_eq1)
+    victoria.append(victoria_eq2)
+
+    resultado[0] = (gol_eq1, gol_eq2, id, url,liga)
+
+    return render_template('form_partido.html', nombre1 = nom_eq1, nombre2 = nom_eq2,  resultado = resultado,  victoria=victoria, empate=empate, derrota=derrota)
+
+@app.route('/grafico/')
+def grafico():
+    cursor = connection.cursor()
+    # Read a single record
+    cursor.execute("select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga=4 and estado='JUGADO';")
+    goles_liga = cursor.fetchall()
+    derrota = []
+    empate = []
+    victoria = []
+    empate_eq1 = 0
+    victoria_eq1 = 0
+    derrota_eq1 = 0
+    empate_eq2 = 0
+    victoria_eq2 = 0
+    derrota_eq2 = 0
+
+    for rows in goles_liga:
+        gol_eq1 = rows["gol_eq1"]
+        gol_eq2 = rows["gol_eq2"]
+        nro_fecha = rows["nro_fecha"]
+        equipo_1 = rows["equipo_1"]
+        equipo_2 = rows["equipo_2"]
+
+        if equipo_1 == '62':
+            if gol_eq1 == gol_eq2:
+                empate_eq1 += 1
+
+
+            if gol_eq2 < gol_eq1:
+                victoria_eq1 += 1
+
+
+            if gol_eq1 < gol_eq2:
+                derrota_eq1 -= 1
+
+        if equipo_2 == '62':
+            if gol_eq1 == gol_eq2:
+                empate_eq1 += 1
+
+
+            if gol_eq1 < gol_eq2:
+                victoria_eq1 += 1
+
+
+            if gol_eq2 < gol_eq1:
+                derrota_eq1 -= 1
+
+        if equipo_1 == '72':
+            if gol_eq1 == gol_eq2:
+                empate_eq2 += 1
+
+            if gol_eq2 < gol_eq1:
+                victoria_eq2 += 1
+
+
+            if gol_eq1 < gol_eq2:
+                derrota_eq2 -= 1
+
+        if equipo_2 == '72':
+            if gol_eq1 == gol_eq2:
+                empate_eq2 += 1
+
+            if gol_eq1 < gol_eq2:
+                victoria_eq2 += 1
+
+
+            if gol_eq2 < gol_eq1:
+                derrota_eq2 -= 1
+
+    derrota.append(derrota_eq1)
+    derrota.append(derrota_eq2)
+    empate.append(empate_eq1)
+    empate.append(empate_eq2)
+    victoria.append(victoria_eq1)
+    victoria.append(victoria_eq2)
+
+    return render_template('graficos.html', victoria = victoria, empate = empate, derrota = derrota )
+
+
+@app.route('/actualizar/<id>/<liga>/', methods=['POST', 'GET'])
+def actualizar(id, liga):
     if request.method == 'POST':
-        idp = request.form['idp']
+        #idp = request.form['idp']
         cursor = connection.cursor()
         # Create a new record
-        equipo1 = request.form['equipo1']
+        #equipo1 = request.form['equipo1']
         gol_eq1 = request.form['gol_eq1']
-        equipo2 = request.form['equipo2']
+        #equipo2 = request.form['equipo2']
         gol_eq2 = request.form['gol_eq2']
         estado = "JUGADO"
-        sql = "UPDATE calendario SET equipo_1 = %s, gol_eq1= %s, equipo_2 = %s, gol_eq2 = %s,  local_eq1 = %s,  local_eq2 = %s, estado = %s WHERE id = %s"
-        cursor.execute(sql, (equipo1, gol_eq1, equipo2, gol_eq2, equipo1, equipo2, estado, idp))
+        sql = "UPDATE calendario SET  gol_eq1= %s, gol_eq2 = %s, estado = %s WHERE id = %s and id_liga = %s"
+        cursor.execute(sql, (gol_eq1, gol_eq2, estado, id, liga))
         cursor.close()
         connection.commit()
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     else:
         return render_template('index.html')
 

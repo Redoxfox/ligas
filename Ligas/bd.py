@@ -26,3 +26,4 @@ for rows in result:
     resultado[cont] = (equipo_1, gol_eq1, equipo_2, gol_eq2)
 
     cont = cont + 1
+

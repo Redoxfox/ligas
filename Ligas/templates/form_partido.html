@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>index</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -11,34 +12,72 @@
   <body>
       <h4>{{ idp }}</h4>
       <h4>{{ idliga }}</h4>
-      <form  action="{{ url }}" method="POST">
+      <form  action="{{ resultado[0][3] }}" method="POST">
           <fieldset id="campos">
               <h4>Datos Nuevo Partido</h4>
           </fieldset>
           <fieldset id="botones">
-              <select name="equipo1" id="eq1">
-                   {% for fila in equipos %}
-                    <option value={{ fila.id }}>{{ fila.nombre }}</option>
-                   {% endfor %}        
-              </select>
+              <label ><strong> id liga</strong></label>
+              <input type="text" value="{{ resultado[0][4] }}" id='liga' class='form-control'  name='id_liga' required='required'>
+              <label ><strong> id partido </strong></label>
+              <input type="text" id='nro_partido' value="{{ resultado[0][2] }}" class='form-control'  name='id_partido' required='required'>
+              {% for fila in nombre1 %}
+              <label >Equipo local:<strong> {{ fila.nombre }}</strong></label>
+              {% endfor %}
               <input type="text" id='gol_eq1' class='form-control' placeholder='Goles equipo Local' name='gol_eq1' required='required'>
-              <select name="equipo2" id="eq2">
-                    {% for fila in equipos %}
-                    <option value={{ fila.id }}>{{ fila.nombre }}</option>
-                    {% endfor %}
-              </select>
+              {% for fila in nombre2 %}
+              <label >Equipo visitante: <strong>{{ fila.nombre }}</strong></label>
+              {% endfor %}
               <input type="text" id='gol_eq2' class='form-control' placeholder='Goles equipo Visitante' name='gol_eq2' required='required'>
-              <input type="text" value="{{ idp }}" id='gol_eq2' class='form-control' placeholder='Goles equipo Visitante' name='idp' required='required'>
             </fieldset>
             <div class="container">
              <input type='submit' name='AgregarProveedor' id='e' class='btn btn-success' value='Agregar'>
              <a href='.$link.' class="btn btn-warning" role="button">Ver Registros</a>'
             </div>
       </form>
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+      <br> </br>
+      <h4>Informacion de equipos</h4>
+      <div id="container" style="width:100%; height:400px;"></div>
+      <script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: '{{nombre1[0].nombre}} vs {{nombre2[0].nombre}}'
+      },
+      xAxis: {
+          categories: ['Local: {{nombre1[0].nombre}} ', 'Visitante: {{nombre2[0].nombre}}']
+      },
+      credits: {
+          enabled: false
+      },
+      series: [{
+          name: 'victoria',
+          data: {{victoria}}
+      }, {
+          name: 'empates',
+          data: {{empate}}
+      }, {
+          name: 'Derrotas',
+          data: {{derrota}}
+      }]
+  }); 
+      </script>
+
+
+<h1>Informacion equipos:</h1>
+<ul>
+<li>{{victoria[0]}}</li>
+<li>{{empate[0]}}</li>
+<li>{{derrota[0]}}</li>
+</ul>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
   </body>
 </html>    
 
