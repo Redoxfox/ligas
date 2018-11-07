@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, json, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 import pymysql.cursors
+from Ligas.lib.Bbinaria import binaria
+from Ligas.lib.Oquicksort import quicksort
 
 # Connect to the database
 connection = pymysql.connect(host='localhost',
@@ -203,83 +205,192 @@ def form_resultados(id, liga):
 
     return render_template('form_partido.html', nombre1 = nom_eq1, nombre2 = nom_eq2,  resultado = resultado,  victoria=victoria, empate=empate, derrota=derrota)
 
-@app.route('/grafico/')
-def grafico():
+@app.route('/grafico/<liga>/' , methods=['POST', 'GET'])
+def grafico(liga):
     cursor = connection.cursor()
     # Read a single record
-    cursor.execute("select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga=4 and estado='JUGADO';")
+    #cursor.execute("select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga=4 and estado='JUGADO';")
+    clasificacion="select * from calendario where id_liga=%s and estado='JUGADO' and temporada='2018-2019';"
+    cursor.execute(clasificacion, (liga))
     goles_liga = cursor.fetchall()
-    derrota = []
-    empate = []
-    victoria = []
-    empate_eq1 = 0
-    victoria_eq1 = 0
-    derrota_eq1 = 0
-    empate_eq2 = 0
-    victoria_eq2 = 0
-    derrota_eq2 = 0
-
+    print(goles_liga)
+    M_clasificacion = []
+    resultado = {}
     for rows in goles_liga:
-        gol_eq1 = rows["gol_eq1"]
-        gol_eq2 = rows["gol_eq2"]
-        nro_fecha = rows["nro_fecha"]
+        nro_equipos = len(M_clasificacion)
+        gol_eq1 = int(rows["gol_eq1"])
+        gol_eq2 = int(rows["gol_eq2"])
         equipo_1 = rows["equipo_1"]
         equipo_2 = rows["equipo_2"]
+        empate_eq1 = 0
+        victoria_eq1 = 0
+        derrota_eq1 = 0
+        empate_eq2 = 0
+        victoria_eq2 = 0
+        derrota_eq2 = 0
+        Goles_favoreq1 = 0
+        Goles_favoreq2 = 0
+        Goles_contraeq1 = 0
+        Goles_contraeq2 = 0
+        puntos_eq1 = 0
+        puntos_eq2 = 0
 
-        if equipo_1 == '62':
-            if gol_eq1 == gol_eq2:
-                empate_eq1 += 1
+        if gol_eq1 == gol_eq2:
+            victoria_eq1 += 0
+            derrota_eq1 += 0
+            empate_eq1 += 1
+            victoria_eq2 += 0
+            derrota_eq2 += 0
+            empate_eq2 += 1
+            Goles_favoreq1 += gol_eq1
+            Goles_favoreq2 += gol_eq2
+            Goles_contraeq1 += gol_eq2
+            Goles_contraeq2 += gol_eq1
+            puntos_eq1 += 1
+            puntos_eq2 += 1
+
+        if gol_eq1 > gol_eq2:
+            victoria_eq1 += 1
+            derrota_eq1 += 0
+            empate_eq1 += 0
+            victoria_eq2 += 0
+            derrota_eq2 += 1
+            empate_eq2 += 0
+            Goles_favoreq1 += gol_eq1
+            Goles_favoreq2 += gol_eq2
+            Goles_contraeq1 += gol_eq2
+            Goles_contraeq2 += gol_eq1
+            puntos_eq1 += 3
+            puntos_eq2 += 0
+
+        if gol_eq1 < gol_eq2:
+            victoria_eq1 += 0
+            derrota_eq1 += 1
+            empate_eq1 += 0
+            victoria_eq2 += 1
+            derrota_eq2 += 0
+            empate_eq2 += 0
+            Goles_favoreq1 += gol_eq1
+            Goles_favoreq2 += gol_eq2
+            Goles_contraeq1 += gol_eq2
+            Goles_contraeq2 += gol_eq1
+            puntos_eq1 += 0
+            puntos_eq2 += 3
+
+        if nro_equipos==0:
+            POS = len(M_clasificacion) + 1
+            Nre_E = int(equipo_1)
+            PJ = 1
+            GF = Goles_favoreq1
+            GC = Goles_contraeq1
+            GD = Goles_favoreq1 - Goles_contraeq1
+            PG = victoria_eq1
+            PP = derrota_eq1
+            PE = empate_eq1
+            PTOS = puntos_eq1
+            M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
+            POS = len(M_clasificacion)
+            Nre_E = int(equipo_2)
+            PJ = 1
+            GF = Goles_favoreq2
+            GC = Goles_contraeq2
+            GD = Goles_favoreq2 - Goles_contraeq2
+            PG = victoria_eq2
+            PP = derrota_eq2
+            PE = empate_eq2
+            PTOS = puntos_eq2
+            M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
+        else:
+            derecha = len(M_clasificacion) - 1
+            ordenadoM = quicksort(M_clasificacion, 0, derecha, 1)
+            datos1 = binaria(ordenadoM, int(equipo_1))
+            datos2 = binaria(ordenadoM, int(equipo_2))
+            Nre_E = int(equipo_1)
+            GF = Goles_favoreq1
+            GC = Goles_contraeq1
+            GD = Goles_favoreq1 - Goles_contraeq1
+            PG = victoria_eq1
+            PP = derrota_eq1
+            PE = empate_eq1
+            PTOS = puntos_eq1
+            Nre_E2 = int(equipo_2)
+            GF2 = Goles_favoreq2
+            GC2 = Goles_contraeq2
+            GD2 = Goles_favoreq2 - Goles_contraeq2
+            PG2 = victoria_eq2
+            PP2 = derrota_eq2
+            PE2 = empate_eq2
+            PTOS2 = puntos_eq2
+            if  datos1 != None :
+                ordenadoM[datos1][0] = datos1 + 1
+                ordenadoM[datos1][1] = Nre_E
+                ordenadoM[datos1][2] = ordenadoM[datos1][2] + 1
+                ordenadoM[datos1][3] = ordenadoM[datos1][3] + GF
+                ordenadoM[datos1][4] = ordenadoM[datos1][4] + GC
+                ordenadoM[datos1][5] = ordenadoM[datos1][5] + GD
+                ordenadoM[datos1][6] = ordenadoM[datos1][6] + PG
+                ordenadoM[datos1][7] = ordenadoM[datos1][7] + PP
+                ordenadoM[datos1][8] = ordenadoM[datos1][8] + PE
+                ordenadoM[datos1][9] = ordenadoM[datos1][9] + PTOS
+            if  datos2 != None :
+                ordenadoM[datos2][0] = datos2 + 1
+                ordenadoM[datos2][1] = Nre_E2
+                ordenadoM[datos1][2] = ordenadoM[datos1][2] + 1
+                ordenadoM[datos2][3] = ordenadoM[datos2][3] + GF2
+                ordenadoM[datos2][4] = ordenadoM[datos2][4] + GC2
+                ordenadoM[datos2][5] = ordenadoM[datos2][5] + GD2
+                ordenadoM[datos2][6] = ordenadoM[datos2][6] + PG2
+                ordenadoM[datos2][7] = ordenadoM[datos2][7] + PP2
+                ordenadoM[datos2][8] = ordenadoM[datos2][8] + PE2
+                ordenadoM[datos2][9] = ordenadoM[datos2][9] + PTOS2
+            if datos1 == None :
+                POS = len(M_clasificacion) + 1
+                Nre_E = int(equipo_1)
+                PJ = 1
+                GF = Goles_favoreq1
+                GC = Goles_contraeq1
+                GD = Goles_favoreq1 - Goles_contraeq1
+                PG = victoria_eq1
+                PP = derrota_eq1
+                PE = empate_eq1
+                PTOS = puntos_eq1
+                M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
+            if datos2 == None :
+                POS = len(M_clasificacion)
+                Nre_E = int(equipo_2)
+                PJ = 1
+                GF = Goles_favoreq2
+                GC = Goles_contraeq2
+                GD = Goles_favoreq2 - Goles_contraeq2
+                PG = victoria_eq2
+                PP = derrota_eq2
+                PE = empate_eq2
+                PTOS = puntos_eq2
+                M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
+
+    ordenadoM = quicksort(M_clasificacion, 0, len(M_clasificacion) - 1, 9)
+    
+
+    for i in range(len(ordenadoM)-1):
+        pos = ordenadoM[i][0]
+        clud = ordenadoM[i][1]
+        pj = ordenadoM[i][2]
+        gf = ordenadoM[i][3]
+        gc = ordenadoM[i][4]
+        dg = ordenadoM[i][5]
+        pg = ordenadoM[i][6]
+        pp = ordenadoM[i][7]
+        pe = ordenadoM[i][8]
+        ptos = ordenadoM[i][9]
+        #datos = binaria(ordenadoM, int(pos2))
+
+        resultado[i] = (pos, clud, pj, gf, gc, dg, pg, pp, pe, ptos)
+        print(resultado)
 
 
-            if gol_eq2 < gol_eq1:
-                victoria_eq1 += 1
+    return render_template('graficos.html', clasificacion = resultado )
 
 
-            if gol_eq1 < gol_eq2:
-                derrota_eq1 -= 1
-
-        if equipo_2 == '62':
-            if gol_eq1 == gol_eq2:
-                empate_eq1 += 1
-
-
-            if gol_eq1 < gol_eq2:
-                victoria_eq1 += 1
-
-
-            if gol_eq2 < gol_eq1:
-                derrota_eq1 -= 1
-
-        if equipo_1 == '72':
-            if gol_eq1 == gol_eq2:
-                empate_eq2 += 1
-
-            if gol_eq2 < gol_eq1:
-                victoria_eq2 += 1
-
-
-            if gol_eq1 < gol_eq2:
-                derrota_eq2 -= 1
-
-        if equipo_2 == '72':
-            if gol_eq1 == gol_eq2:
-                empate_eq2 += 1
-
-            if gol_eq1 < gol_eq2:
-                victoria_eq2 += 1
-
-
-            if gol_eq2 < gol_eq1:
-                derrota_eq2 -= 1
-
-    derrota.append(derrota_eq1)
-    derrota.append(derrota_eq2)
-    empate.append(empate_eq1)
-    empate.append(empate_eq2)
-    victoria.append(victoria_eq1)
-    victoria.append(victoria_eq2)
-
-    return render_template('graficos.html', victoria = victoria, empate = empate, derrota = derrota )
 
 
 @app.route('/actualizar/<id>/<liga>/', methods=['POST', 'GET'])
