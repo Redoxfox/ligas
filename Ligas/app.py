@@ -300,6 +300,7 @@ def grafico(liga):
             PE = empate_eq2
             PTOS = puntos_eq2
             M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
+            print(M_clasificacion)
         else:
             derecha = len(M_clasificacion) - 1
             ordenadoM = quicksort(M_clasificacion, 0, derecha, 1)
@@ -324,18 +325,18 @@ def grafico(liga):
             if  datos1 != None :
                 ordenadoM[datos1][0] = datos1 + 1
                 ordenadoM[datos1][1] = Nre_E
-                ordenadoM[datos1][2] = ordenadoM[datos1][2] + 1
                 ordenadoM[datos1][3] = ordenadoM[datos1][3] + GF
                 ordenadoM[datos1][4] = ordenadoM[datos1][4] + GC
                 ordenadoM[datos1][5] = ordenadoM[datos1][5] + GD
                 ordenadoM[datos1][6] = ordenadoM[datos1][6] + PG
                 ordenadoM[datos1][7] = ordenadoM[datos1][7] + PP
                 ordenadoM[datos1][8] = ordenadoM[datos1][8] + PE
+                ordenadoM[datos1][2] = ordenadoM[datos1][6] + ordenadoM[datos1][7] + ordenadoM[datos1][8]
                 ordenadoM[datos1][9] = ordenadoM[datos1][9] + PTOS
             if  datos2 != None :
                 ordenadoM[datos2][0] = datos2 + 1
                 ordenadoM[datos2][1] = Nre_E2
-                ordenadoM[datos1][2] = ordenadoM[datos1][2] + 1
+                ordenadoM[datos2][2] = ordenadoM[datos2][2] + 1
                 ordenadoM[datos2][3] = ordenadoM[datos2][3] + GF2
                 ordenadoM[datos2][4] = ordenadoM[datos2][4] + GC2
                 ordenadoM[datos2][5] = ordenadoM[datos2][5] + GD2
@@ -369,23 +370,31 @@ def grafico(liga):
                 M_clasificacion.append([POS, Nre_E, PJ, GF, GC, GD, PG, PP, PE, PTOS])
 
     ordenadoM = quicksort(M_clasificacion, 0, len(M_clasificacion) - 1, 9)
-    
 
-    for i in range(len(ordenadoM)-1):
-        pos = ordenadoM[i][0]
-        clud = ordenadoM[i][1]
-        pj = ordenadoM[i][2]
-        gf = ordenadoM[i][3]
-        gc = ordenadoM[i][4]
-        dg = ordenadoM[i][5]
-        pg = ordenadoM[i][6]
-        pp = ordenadoM[i][7]
-        pe = ordenadoM[i][8]
-        ptos = ordenadoM[i][9]
+
+    for i in range(len(ordenadoM)):
+        indice=len(ordenadoM)-1-i
+        idclud = ordenadoM[indice][1]
+        sql1 = "SELECT nombre FROM equipos WHERE id= %s "
+        cursor.execute(sql1, (idclud ))
+        nom_eq1 = cursor.fetchall()
+
+        pos = i + 1
+        clud = nom_eq1[0]
+        #clud = ordenadoM[indice][1]
+        pj = ordenadoM[indice][2]
+        gf = ordenadoM[indice][3]
+        gc = ordenadoM[indice][4]
+        dg = ordenadoM[indice][5]
+        pg = ordenadoM[indice][6]
+        pp = ordenadoM[indice][7]
+        pe = ordenadoM[indice][8]
+        ptos = ordenadoM[indice][9]
         #datos = binaria(ordenadoM, int(pos2))
 
+
         resultado[i] = (pos, clud, pj, gf, gc, dg, pg, pp, pe, ptos)
-        print(resultado)
+
 
 
     return render_template('graficos.html', clasificacion = resultado )
