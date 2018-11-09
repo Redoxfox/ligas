@@ -66,12 +66,47 @@
       </script>
 
 
-<h1>Informacion equipos:</h1>
+<!-- <h1>Informacion equipos:</h1>
 <ul>
 <li>{{victoria[0]}}</li>
 <li>{{empate[0]}}</li>
 <li>{{derrota[0]}}</li>
-</ul>
+</ul> -->
+
+      <h4>Clasificacion equipos</h4>
+        <table>
+        <thead>
+          <tr>
+            <th>POS</th>
+            <th>CLUD</th>
+            <th>PJ</th>
+              <th>GF</th>
+            <th>GC</th>
+              <th>DG</th>
+              <th>PG</th>
+              <th>PP</th>
+              <th>PE</th>
+              <th>PTOS</th>
+          </tr>
+        </thead>
+        <tbody>
+
+         {% for liga in clasificacion %}
+          <tr>
+            <td>{{ clasificacion[liga][0] }}</td>
+            <td>{{ clasificacion[liga][1].nombre}}</td>
+            <td>{{ clasificacion[liga][2] }}</td>
+            <td>{{ clasificacion[liga][3] }}</td>
+            <td>{{ clasificacion[liga][4] }}</td>
+            <td>{{ clasificacion[liga][5] }}</td>
+              <td>{{ clasificacion[liga][6] }}</td>
+              <td>{{ clasificacion[liga][7] }}</td>
+              <td>{{ clasificacion[liga][8] }}</td>
+              <td>{{ clasificacion[liga][9] }}</td>
+          </tr>
+         {% endfor %}
+        </tbody>
+    </table>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
