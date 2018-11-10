@@ -103,11 +103,11 @@ def form_resultados(id, liga, id_eq1, id_eq2):
         gol_eq2 = rows["gol_eq2"]
 
     sql1 = "SELECT nombre FROM equipos WHERE id= %s "
-    cursor.execute(sql1, (id_e1))
+    cursor.execute(sql1, (id_eq1))
     nom_eq1 = cursor.fetchall()
 
     sql2 = "SELECT nombre FROM equipos WHERE id= %s "
-    cursor.execute(sql2, (id_e2))
+    cursor.execute(sql2, (id_eq2))
     nom_eq2 = cursor.fetchall()
 
     sql3 = "select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga= %s and estado='JUGADO';"
@@ -360,10 +360,10 @@ def form_resultados(id, liga, id_eq1, id_eq2):
         idclud = ordenadoM[indice][1]
         sql1 = "SELECT nombre FROM equipos WHERE id= %s "
         cursor.execute(sql1, (idclud ))
-        nom_eq1 = cursor.fetchall()
+        nom_clud = cursor.fetchall()
 
         pos = i + 1
-        clud = nom_eq1[0]
+        clud = nom_clud[0]
         #clud = ordenadoM[indice][1]
         pj = ordenadoM[indice][2]
         gf = ordenadoM[indice][3]
