@@ -16,7 +16,7 @@ def download(url):
 
 
 if __name__ == '__main__':
-    url = "https://www.google.com/search?client=ubuntu&channel=fs&ei=upFwW4ufMLLy5gKPyaOQBQ&q=consultar+resultados+ultima+temporada+liga+espa%C3%B1ola&oq=consultar+resultados+ultima+temporada+liga+es&gs_l=psy-ab.1.0.33i21k1.7103.26476.0.30172.45.39.0.6.6.0.169.5097.0j36.36.0....0...1c.1.64.psy-ab..3.42.5151...0j35i39k1j0i67k1j0i131k1j0i131i67k1j0i20i263k1j0i131i20i263k1j0i13k1j0i13i30k1j0i8i13i30k1j33i22i29i30k1j33i160k1j0i22i30k1.0.zRr94j_KOJY#sie=lg;/g/11c6w1q_2s;2;/m/09gqx;mt;fp;1"
+    url = "https://www.resultados-futbol.com/ligue_12017"
     r = download(url)
     lista = []
     lista_apertura = []

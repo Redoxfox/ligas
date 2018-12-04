@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ <h4>{{ idp }}</h4>
+      <h4>{{ idliga }}</h4>
+      <form  action="{{ url }}" method="POST">
+          <fieldset id="campos">
+              <h4>Datos Nueva Liga</h4>
+          </fieldset>
+          <fieldset id="botones">
+              <h6>Numero de liga</h6>
+              <select name="id" id="eq1">
+                    <option value={{ nro_liga }}>{{ nro_liga }}</option>
+              </select>
+              <input type="text" id='gol_eq1' class='form-control' placeholder='Nombre nueva liga' name='nom_lig' required='required'>
+              <h6>Pais nueva liga</h6>
+              <select name="pais" id="eq_2">
+                    {% for fila in pais %}
+                    <option value={{ fila.pais }}>{{ fila.pais }}</option>
+                    {% endfor %}
+              </select>
+              <h6>Continente nueva liga</h6>
+              <select name="continente" id="eq3">
+                    {% for fila in continente %}
+                    <option value={{ fila.continente }}>{{ fila.continente }}</option>
+                    {% endfor %}
+              </select>
+              <h6>Numero de equipos</h6>
+              <select name="equipos" id="eq">
+                    {% for fila in jornadas %}
+                    <option value={{ fila }}>{{ fila }}</option>
+                    {% endfor %}
+              </select>
+              <h6>Numero de jornadas</h6>
+              <select name="jornadas" id="eq">
+                    {% for fila in jornadas %}
+                    <option value={{ fila }}>{{ fila }}</option>
+                    {% endfor %}
+              </select>
+              <h6>Numero de partidos por jornada</h6>
+               <select name="partidosjornada" id="eq2">
+                    {% for fila in jornadas %}
+                    <option value={{ fila }}>{{ fila}}</option>
+                    {% endfor %}
+              </select>
+
+            </fieldset>
+            <div class="container">
+             <input type='submit' name='AgregarProveedor' id='e' class='btn btn-success' value='Agregar'>
+             <a href='.$link.' class="btn btn-warning" role="button">Ver Registros</a>'
+            </div>
+      </form>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</body>
+</html>

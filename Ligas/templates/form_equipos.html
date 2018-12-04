@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>index</title>
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+      <h4>{{ idp }}</h4>
+      <h4>{{ idliga }}</h4>
+      <form  action="{{ url }}" method="POST">
+          <fieldset id="campos">
+              <h4>Datos Nuevo Equipo</h4>
+          </fieldset>
+          <fieldset id="botones">
+              <h5>Numero Ligas</h5>
+              <select name="id_liga" id="eq2">
+                    {% for fila in ligas_reg %}
+                    <option value={{ fila }}>{{ fila }}</option>
+                    {% endfor %}
+              </select>
+              <h5>Id nuevo equipo</h5>
+              <select name="id_equipo" id="eq1">
+                    <option value={{ nro_liga }}>{{ nro_liga }}</option>
+              </select>
+              <input type="text" id='gol_eq1' class='form-control' placeholder='Nombre Nuevo Equipo' name='nom_eq' required='required'>
+              <select name="pais" id="eq">
+                    {% for fila in pais %}
+                    <option value={{ fila.pais  }}>{{ fila.pais }}</option>
+                    {% endfor %}
+              </select>
+            </fieldset>
+            <div class="container">
+             <input type='submit' name='AgregarProveedor' id='e' class='btn btn-success' value='Agregar'>
+             <a href='.$link.' class="btn btn-warning" role="button">Ver Registros</a>'
+            </div>
+      </form>
+      <br>
+      <h4>Lista de equipos ingresados</h4>
+        <table>
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>liga</th>
+            <th>nombre</th>
+            <th>pais</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+
+         {% for liga in lista_clubes %}
+          <tr>
+            <td>{{ lista_clubes[liga][0] }}</td>
+            <td>{{ lista_clubes[liga][1] }}</td>
+            <td>{{ lista_clubes[liga][2] }}</td>
+            <td>{{ lista_clubes[liga][3] }}</td>
+              <td>{{ lista_clubes[liga][4] }}</td>
+          </tr>
+         {% endfor %}
+        </tbody>
+    </table>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>

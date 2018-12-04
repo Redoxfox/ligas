@@ -36,6 +36,40 @@
             </div>
       </form>
       <br> </br>
+             <h4>Cuotas equipos</h4>
+        <table>
+        <thead>
+          <tr>
+            <th>DESCRIPCION</th>
+            <th>{{nombre1[0].nombre}}</th>
+            <th>{{nombre2[0].nombre}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> </td>
+            <td>LOCAL </td>
+            <td>VISITANTE </td>
+          </tr>
+          <tr>
+            <td>VICTORIAS </td>
+            <td>{{clocal[0]}}</td>
+            <td>{{cvisit[0]}}</td>
+          </tr>
+          <tr>
+            <td>DERROTAS </td>
+            <td>{{clocal[1]}}</td>
+            <td>{{cvisit[1]}}</td>
+           </tr>
+          <tr>
+              <td>EMPATES </td>
+              <td>{{clocal[2]}}</td>
+              <td>{{cvisit[2]}}</td>
+          </tr>
+        </tbody>
+    </table>
+ <br>
+      <br>
       <h4>Informacion de equipos</h4>
       <div id="container" style="width:100%; height:400px;"></div>
       <script>
@@ -47,7 +81,7 @@
           text: '{{nombre1[0].nombre}} vs {{nombre2[0].nombre}}'
       },
       xAxis: {
-          categories: ['Local: {{nombre1[0].nombre}} ', 'Visitante: {{nombre2[0].nombre}}']
+          categories: ['Local: {{nombre1[0].nombre}} ', 'Visitante: {{nombre2[0].nombre}}','His_Local: {{nombre1[0].nombre}} ', 'His_Visitante: {{nombre1[0].nombre}}','His_Local: {{nombre2[0].nombre}} ', 'His_Visitante: {{nombre2[0].nombre}}']
       },
       credits: {
           enabled: false
@@ -66,12 +100,112 @@
       </script>
 
 
-<!-- <h1>Informacion equipos:</h1>
-<ul>
-<li>{{victoria[0]}}</li>
-<li>{{empate[0]}}</li>
-<li>{{derrota[0]}}</li>
-</ul> -->
+ <br>
+         <h4>Estadisticas equipos</h4>
+        <table>
+        <thead>
+          <tr>
+            <th>DESCRIPCION</th>
+            <th colspan = "3">{{nombre1[0].nombre}}</th>
+            <th colspan = "3">{{nombre2[0].nombre}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> </td>
+            <td>TOTAL </td>
+            <td>LOCAL </td>
+            <td>VISITANTE </td>
+            <td>TOTAL </td>
+            <td>LOCAL </td>
+            <td>VISITANTE </td>
+          </tr>
+          <tr>
+            <td>VICTORIAS </td>
+            <td>{{victoria[0]}}</td>
+            <td>{{victoria[2]}}</td>
+            <td>{{victoria[3]}}</td>
+            <td>{{victoria[1]}}</td>
+            <td>{{victoria[4]}}</td>
+            <td>{{victoria[5]}}</td>
+          </tr>
+          <tr>
+            <td>DERROTAS </td>
+            <td>{{derrota[0]}}</td>
+            <td>{{derrota[2]}}</td>
+            <td>{{derrota[3]}}</td>
+            <td>{{derrota[1]}}</td>
+            <td>{{derrota[4]}}</td>
+            <td>{{derrota[5]}}</td>
+           </tr>
+          <tr>
+              <td>EMPATES </td>
+              <td>{{empate[0]}}</td>
+              <td>{{empate[2]}}</td>
+              <td>{{empate[3]}}</td>
+              <td>{{empate[1]}}</td>
+              <td>{{empate[4]}}</td>
+              <td>{{empate[5]}}</td>
+          </tr>
+        </tbody>
+    </table>
+
+ <br>
+  <br>
+          
+      <h4>Probabilidades equipos</h4>
+        <table>
+        <thead>
+          <tr>
+            <th>DESCRIPCION</th>
+            <th colspan = "3">{{nombre1[0].nombre}}</th>
+            <th colspan = "3">{{nombre2[0].nombre}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> </td>
+            <td>TOTAL </td>
+            <td>LOCAL </td>
+            <td>VISITANTE </td>
+            <td>TOTAL </td>
+            <td>LOCAL </td>
+            <td>VISITANTE </td>
+          </tr>
+          <tr>
+            <td>VICTORIAS </td>
+            <td>{{pvictoria[0]}}</td>
+            <td>{{pvictoria[1]}}</td>
+            <td>{{pvictoria[2]}}</td>
+            <td>{{pvictoria[3]}}</td>
+            <td>{{pvictoria[4]}}</td>
+            <td>{{pvictoria[5]}}</td>
+          </tr>
+          <tr>
+            <td>DERROTAS </td>
+            <td>{{pderrota[0]}}</td>
+            <td>{{pderrota[1]}}</td>
+            <td>{{pderrota[2]}}</td>
+            <td>{{pderrota[3]}}</td>
+            <td>{{pderrota[4]}}</td>
+            <td>{{pderrota[5]}}</td>
+           </tr>
+          <tr>
+              <td>EMPATES </td>
+              <td>{{pempate[0]}}</td>
+              <td>{{pempate[1]}}</td>
+              <td>{{pempate[2]}}</td>
+              <td>{{pempate[3]}}</td>
+              <td>{{pempate[4]}}</td>
+              <td>{{pempate[5]}}</td>
+          </tr>
+        </tbody>
+    </table>
+
+ <br>
+  <br>
+
+
 
       <h4>Clasificacion equipos</h4>
         <table>
