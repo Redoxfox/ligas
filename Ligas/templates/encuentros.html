@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>index</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+      <h4>{{ idp }}</h4>
+      <h4>{{ idliga }}</h4>
+      <form  action="http://localhost:8000/partido_actualizado/" method="POST">
+          <fieldset id="campos">
+              <h4>Datos Nuevo Partido</h4>
+          </fieldset>
+          <fieldset id="botones">
+              <label ><strong> id liga</strong></label>
+              <input type="text" value="{{ liga }}" id='liga' class='form-control'  name='id_liga' required='required'>
+              <label ><strong> id partido </strong></label>
+              <input type="text" id='nro_partido' value="{{ idpt }}" class='form-control'  name='id_partido' required='required'>
+              <label ><strong> nro jornada </strong></label>
+              <input type="text" id='nro_jor' value="{{ fecha }}" class='form-control'  name='fecha' required='required'>
+              <select name="clud1" id="eq__2">
+                    {% for fila in result %}
+                    <option value={{ fila.id }}>{{ fila.nombre }}</option>
+                    {% endfor %}
+              </select>
+              <input type="text" id='gol_eq1' value=0 class='form-control' placeholder='Goles equipo Local' name='gol_eq1' required='required'>
+               <select name="clud2" id="eq_2">
+                    {% for fila in result %}
+                    <option value={{ fila.id }}>{{ fila.nombre }}</option>
+                    {% endfor %}
+              </select>
+              <input type="text" id='gol_eq2'  value=0  class='form-control' placeholder='Goles equipo Visitante' name='gol_eq2' required='required'>
+            </fieldset>
+            <div class="container">
+             <input type='submit' name='AgregarProveedor' id='e' class='btn btn-success' value='Agregar'>
+             <a href='.$link.' class="btn btn-warning" role="button">Ver Registros</a>'
+            </div>
+      </form>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+  </body>
+</html>

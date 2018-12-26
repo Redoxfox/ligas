@@ -36,8 +36,20 @@ def home():
         url = "http://localhost:8000/clasificacion/" + str(idlig) + "/"
         resultado[cont] = (idlig,  nombre, pais, continente, url)
         cont = cont + 1
+    sql1 = " select id from liga;"
+    cursor.execute(sql1)
+    ligas = cursor.fetchall()
+    ligas_reg = []
+    jornadas = []
+    for rows in ligas:
+        nro_liga = rows["id"]
+        ligas_reg.append(nro_liga)
+    liga_ext = len(ligas) + 1
+    ligas_reg.append(liga_ext)
+    for i in range(1, 45):
+        jornadas.append(i)
 
-    return render_template('home.html', result=resultado)
+    return render_template('home.html', result=resultado, ligas_reg = ligas_reg, jornadas = jornadas )
 #-----------------------------------------------------------------------------------------------------------------------
 #Datos clasificacion
 #-----------------------------------------------------------------------------------------------------------------------
@@ -64,6 +76,7 @@ def liga(id):
         nom_eq2 = cursor.fetchone()
         equipo_2 = nom_eq2['nombre']
         url = "http://localhost:8000/resultado/" + str(idp) + "/" + str(idlig) + "/" + str(ps) + "/" + str(ps2)+ "/"
+        urlrev = "http://localhost:8000/"
         if Jornada != nrofecha:
            Jornada = nrofecha
            cambio = 'true'
@@ -76,7 +89,44 @@ def liga(id):
 
         cont = cont + 1
 
-    return render_template('clasificacion.html', result=resultado, nombre=id, liga = 'española')
+    return render_template('clasificacion.html', result=resultado, nombre=id, liga = 'española', url = urlrev )
+
+#-----------------------------------------------------------------------------------------------------------------------
+#Ingresar partido.
+#-----------------------------------------------------------------------------------------------------------------------
+@app.route('/reasignar/<idfecha>/<dliga>/', methods=['POST', 'GET'])
+def reasignar(idfecha, dliga):
+    cursor=connection.cursor()
+    idlig = dliga
+    idp = idfecha
+    resultado = {}
+    resultado2 = {}
+    cont = 0
+    jornadas = "select * from calendario where id_liga = %s and nro_fecha=%s;"
+    cursor.execute(jornadas, (idlig, idp))
+    nro_jornada = cursor.fetchall()
+    for rows in nro_jornada:
+        idlig = rows["id_liga"]
+        nrofecha = rows["nro_fecha"]
+        idp = rows["id"]
+        ideq1 = rows["equipo_1"]
+        ideq2= rows["equipo_2"]
+        gol_eq1 = rows["gol_eq1"]
+        gol_eq2 = rows["gol_eq2"]
+        sql1 = "SELECT nombre FROM equipos WHERE id= %s "
+        cursor.execute(sql1, (ideq1 ))
+        nom_eq1 = cursor.fetchall()
+        sql2 = "SELECT nombre FROM equipos WHERE id= %s "
+        cursor.execute(sql2, (ideq2))
+        nom_eq2 = cursor.fetchall()
+        clud1 = nom_eq1[0]
+        clud2 = nom_eq2[0]
+        resultado2[cont] = (clud1, clud2)
+        resultado[cont] = (idp, gol_eq1,gol_eq2)
+        cont += 1
+
+    return render_template('reasignacion.html', result2=resultado2, result=resultado, jornada=nro_jornada, idp=idp, idlig=idlig, liga = 'española', fecha = idfecha )
+
 
 
 
@@ -323,8 +373,6 @@ def form_resultados(id, liga, id_eq1, id_eq2):
     for i in range(len(ordenadoM)):
         indice=len(ordenadoM)-1-i
         idclud = ordenadoM[indice][1]
-
-
         sql1 = "SELECT nombre FROM equipos WHERE id= %s "
         cursor.execute(sql1, (idclud ))
         nom_clud = cursor.fetchall()
@@ -342,10 +390,8 @@ def form_resultados(id, liga, id_eq1, id_eq2):
         ptos = ordenadoM[indice][9]
         #datos = binaria(ordenadoM, int(pos2))
         resultado1[i] = (pos, clud, pj, gf, gc, dg, pg, pp, pe, ptos)
-
         if idclud == id_e1:
             pos_eq1 = indice
-
         if idclud == id_e2:
             pos_eq2 = indice
 
@@ -684,7 +730,7 @@ def nueva_liga(liga):
 
         resultado[i] = (clud1, clud2)
 
-    return render_template('calendario.html', clasificacion =  resultado )
+    return render_template('calendario.html', clasificacion = resultado )
 
 @app.route('/NuevoEquipo/', methods=['POST', 'GET'])
 def NuevoEquipo():
@@ -709,7 +755,7 @@ def NuevoEquipo():
     for rows in ligas:
         nro_liga = rows["id"]
         ligas_reg.append(nro_liga)
-    liga_ext = len(ligas) + 2
+    liga_ext = len(ligas) + 1
     ligas_reg.append(liga_ext)
     sql_lista = "select * from equipos order by id desc;"
     cursor.execute(sql_lista)
@@ -746,6 +792,7 @@ def calendario():
     # Read a single record
     #cursor.execute("select nro_fecha, equipo_1, equipo_2, gol_eq1, gol_eq2 from calendario where id_liga=4 and estado='JUGADO';")
     cursor = connection.cursor()
+
     equipos_liga="select id from equipos where id_liga = %s and estado='ACTIVADO';"
     cursor.execute(equipos_liga, (id))
     fixture = cursor.fetchall()
@@ -760,25 +807,57 @@ def calendario():
     jor = int(nro_fh_tor)
     par_jor = int(partidos_jorn)
     partidos = fechas_liga(lista_equipos, jor, par_jor)
+    Jornada = 1
+    nro_fecha = 0
+    partidosc= "select id from calendario;"
+    cursor.execute(partidosc)
+    fixture = cursor.fetchall()
+    lista_partidos = []
+    for rows in fixture:
+        nro_equipo = int(rows["id"])
+        lista_partidos.append(nro_equipo)
+    #idp = len(lista_equipos) + 2
 
-    for i in range(len(partidos)-1):
+
+    for i in range(0, len(partidos)-1):
         indice=i
         ideq1= partidos[indice][0]
         ideq2 = partidos[indice][1]
         sql1 = "SELECT nombre FROM equipos WHERE id= %s "
         cursor.execute(sql1, (ideq1 ))
         nom_eq1 = cursor.fetchall()
-
         sql2 = "SELECT nombre FROM equipos WHERE id= %s "
         cursor.execute(sql2, (ideq2))
         nom_eq2 = cursor.fetchall()
-
         pos = i + 1
         clud1 = nom_eq1[0]
         clud2 = nom_eq2[0]
-
-
         resultado[i] = (clud1, clud2)
+        gol_eq1 = 0
+        gol_eq2 = 0
+        equipo_1 = ideq1
+        equipo_2 = ideq2
+        local_eq1 = ideq1
+        local_eq2 = ideq2
+        estado = "PENDIENTE"
+        temporada = "2018-2019"
+        fecha = "2018-12-04"
+        idp = "null"
+
+        if nro_fecha < par_jor:
+            cursor = connection.cursor()
+            sql2 = "INSERT INTO calendario (id, nro_fecha, id_liga, equipo_1, gol_eq1, equipo_2, gol_eq2, local_eq1, local_eq2, estado, temporada, fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(sql2, (idp, Jornada, id, equipo_1, gol_eq1, equipo_2, gol_eq2, local_eq1, local_eq2, estado, temporada,fecha))
+            connection.commit()
+        else:
+            Jornada += 1
+            nro_fecha = 0
+            cursor = connection.cursor()
+            sql2 = "INSERT INTO calendario (id, nro_fecha, id_liga, equipo_1, gol_eq1, equipo_2, gol_eq2, local_eq1, local_eq2, estado, temporada, fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(sql2, (idp, Jornada, id, equipo_1, gol_eq1, equipo_2, gol_eq2, local_eq1, local_eq2, estado, temporada, fecha))
+            connection.commit()
+        nro_fecha += 1
+
 
     return render_template('calendario.html', clasificacion =  resultado )
 
@@ -798,7 +877,8 @@ def actualizar(id, liga):
         cursor.execute(sql, (gol_eq1, gol_eq2, estado, id, liga))
         cursor.close()
         connection.commit()
-        return redirect(url_for('home'))
+        #return redirect(url_for('home'))
+        return redirect(url_for('liga', id=liga))
     else:
         return render_template('index.html')
 
@@ -842,6 +922,43 @@ def IngresarEquipo():
     return redirect(url_for('NuevoEquipo'))
 
 
+@app.route('/encuentros/<idp>/<idliga>/<fecha>/', methods=['POST', 'GET'])
+def encuentros(idp, idliga, fecha):
+    cursor = connection.cursor()
+    idlig = idliga
+    equipos_liga = "select * from equipos where id_liga = %s;"
+    cursor.execute(equipos_liga, (idlig))
+    equipos = cursor.fetchall()
+
+    return render_template('encuentros.html',  result=equipos, idpt = idp, liga = idliga, fecha = fecha )
+
+@app.route('/partido_actualizado/', methods=['POST', 'GET'])
+def partido_actualizado():
+    if request.method == 'POST':
+        cursor = connection.cursor()
+        liga = request.form['id_liga']
+        idp = request.form['id_partido']
+        fecha = request.form['fecha']
+        # Create a new record
+        equipo1 = request.form['clud1']
+        gol_eq1 = request.form['gol_eq1']
+        equipo2 = request.form['clud2']
+        gol_eq2 = request.form['gol_eq2']
+        estado="PENDIENTE"
+        sql = "UPDATE calendario SET equipo_1= %s, gol_eq1= %s, equipo_2= %s, gol_eq2 = %s, local_eq1= %s, local_eq2= %s, estado= %s WHERE id = %s and id_liga = %s"
+        cursor.execute(sql, (equipo1, gol_eq1, equipo2, gol_eq2,  equipo1, equipo2, estado, idp, liga))
+        cursor.close()
+        connection.commit()
+        #return redirect(url_for('home'))
+        return redirect(url_for('reasignar', idfecha=fecha, dliga=liga))
+@app.route('/gestion_partido/', methods=['POST', 'GET'])
+def gestion_partido():
+    if request.method == 'POST':
+        urlrev = "http://localhost:8000/"
+        cursor = connection.cursor()
+        liga = request.form['id_liga']
+        fecha = request.form['jornadas']
+        return redirect(url_for('reasignar', idfecha=fecha, dliga=liga))
 
 
 if __name__ == "__main__":

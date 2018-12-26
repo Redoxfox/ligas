@@ -14,11 +14,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   </head>
   <body>
-    <h4>Clasificacion equipos {{ liga }}</h4>
+    <a href={{ url }} class='btn btn-success' > Volver a seleccion de liga</a>
+    <h4>Partidos pendientes por jugar {{ liga }}</h4>
     
     <table>
         <thead>
           <tr>
+            <th>Id</th>
             <th>local</th>
             <th>goles</th>
             <th>visitante</th>

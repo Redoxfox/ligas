@@ -34,6 +34,31 @@
          {% endfor %}
         </tbody>
     </table>
+    <br>
+    <br>
+      <form  action="http://localhost:8000/gestion_partido/" method="POST">
+          <fieldset id="campos">
+              <h4>Gestion de partidos nueva temporada liga</h4>
+          </fieldset>
+          <fieldset id="botones">
+              <h5>Numero Ligas</h5>
+              <select name="id_liga" id="eq2">
+                    {% for fila in ligas_reg %}
+                    <option value={{ fila }}>{{ fila }}</option>
+                    {% endfor %}
+              </select>
+              <h5>Numero de jornada</h5>
+              <select name="jornadas" id="eq">
+                    {% for fila in jornadas %}
+                    <option value={{ fila }}>{{ fila }}</option>
+                    {% endfor %}
+              </select>
+            </fieldset>
+            <div class="container">
+             <input type='submit' name='AgregarProveedor' id='e' class='btn btn-success' value='Agregar'>
+             <a href='.$link.' class="btn btn-warning" role="button">Ver Registros</a>'
+            </div>
+      </form>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
